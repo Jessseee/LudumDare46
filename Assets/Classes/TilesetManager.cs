@@ -16,8 +16,11 @@ public static class TilesetManager
         foreach (TileBase tile in tileAssets)
         {
             string[] tileInfo = tile.name.Split('_');
-            if (!tileSets.ContainsKey(tileInfo[0])) tileSets[tileInfo[0]] = new Dictionary<string, TileBase>();
-            tileSets[tileInfo[0]].Add(tileInfo[1], tile);
+            if(tileInfo[2] == "rules")
+            {
+                if (!tileSets.ContainsKey(tileInfo[0])) tileSets[tileInfo[0]] = new Dictionary<string, TileBase>();
+                tileSets[tileInfo[0]].Add(tileInfo[1], tile);
+            }
         }
     }
 
