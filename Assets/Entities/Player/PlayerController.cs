@@ -7,6 +7,8 @@ public class PlayerController : MonoBehaviour
 {
     Rigidbody2D rb;
     InputController controls;
+    Animator animator;
+    SpriteRenderer sprite;
 
     private void Awake()
     {
@@ -30,6 +32,8 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        animator = GetComponent<Animator>();
+        sprite = GetComponent<SpriteRenderer>();
 
         //Add control delegates
         controls.Player.Interact.performed += ctx => handleInteract();
@@ -40,7 +44,37 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        rb.velocity = controls.Player.Move.ReadValue<Vector2>() * 10;
+        Vector2 direction = controls.Player.Move.ReadValue<Vector2>();
+        rb.velocity = direction * 10;
+
+        if (direction != Vector2.zero)
+        {
+            animator.SetBool("Moving", true);
+        }
+        else
+        {
+            animator.SetBool("Moving", false);
+        }
+        
+        if (direction.y < 0)
+        {
+            animator.SetBool("Backward", true);
+        }
+
+        if (direction.y > 0)
+        {
+            animator.SetBool("Backward", false);
+        }
+
+        if (direction.x < 0)
+        {
+            sprite.flipX = true;
+        }
+
+        if (direction.x > 0)
+        {
+            sprite.flipX = false;
+        }
     }
 
     void handleInteract()
