@@ -1,25 +1,38 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
 public static class TilesetManager
 {
-    static Dictionary<string, TileBase> tiles;
+    static Dictionary<string, Dictionary<string, TileBase>> tileSets;
 
     //Load all tilesets on creation
     static TilesetManager()
     {
-        tiles = new Dictionary<string, TileBase>();
-        TileBase[] tileAssets = Resources.LoadAll<TileBase>("tilesets/test/tiles");
+        tileSets = new Dictionary<string, Dictionary<string, TileBase>>();
+        TileBase[] tileAssets = Resources.LoadAll<TileBase>("tilesets");
         foreach (TileBase tile in tileAssets)
         {
-            tiles.Add(tile.name, tile);
+            string[] tileInfo = tile.name.Split('_');
+            if (!tileSets.ContainsKey(tileInfo[0])) tileSets[tileInfo[0]] = new Dictionary<string, TileBase>();
+            tileSets[tileInfo[0]].Add(tileInfo[1], tile);
         }
     }
 
-    public static TileBase Tile(string name)
+    public static string[] Sets()
     {
-        return tiles[name];
+        return tileSets.Keys.ToArray();
+    }
+
+    public static Dictionary<string, TileBase> Set(string name)
+    {
+        return tileSets[name];
+    }
+
+    public static TileBase Tile(string set, string name)
+    {
+        return tileSets[set][name];
     }
 }
