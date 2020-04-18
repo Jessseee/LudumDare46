@@ -36,6 +36,14 @@
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": ""
+                },
+                {
+                    "name": "Pause",
+                    "type": "Button",
+                    "id": "e48ccb8d-e030-42f4-b4f7-f76d78784393",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
                 }
             ],
             "bindings": [
@@ -170,6 +178,28 @@
                     "action": "Interact",
                     "isComposite": false,
                     "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "822a71b4-3929-48a5-8488-ec586a0b3fdb",
+                    "path": "<Keyboard>/escape",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard and Mouse",
+                    "action": "Pause",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "4a47e8bd-8263-4716-a507-9d21f2e13a3e",
+                    "path": "<Gamepad>/start",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Controller",
+                    "action": "Pause",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         },
@@ -178,7 +208,7 @@
             "id": "48768270-a9fd-47c3-80c3-0e5fe1a9e5d5",
             "actions": [
                 {
-                    "name": "Pause",
+                    "name": "Resume",
                     "type": "Button",
                     "id": "34e2ed34-0bd2-4ff6-a2e5-ba15f8f8549b",
                     "expectedControlType": "Button",
@@ -194,7 +224,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Pause",
+                    "action": "Resume",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -205,7 +235,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Pause",
+                    "action": "Resume",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

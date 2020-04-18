@@ -49,6 +49,14 @@ public class @InputController : IInputActionCollection, IDisposable
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """"
+                },
+                {
+                    ""name"": ""Pause"",
+                    ""type"": ""Button"",
+                    ""id"": ""e48ccb8d-e030-42f4-b4f7-f76d78784393"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
                 }
             ],
             ""bindings"": [
@@ -183,6 +191,28 @@ public class @InputController : IInputActionCollection, IDisposable
                     ""action"": ""Interact"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""822a71b4-3929-48a5-8488-ec586a0b3fdb"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard and Mouse"",
+                    ""action"": ""Pause"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""4a47e8bd-8263-4716-a507-9d21f2e13a3e"",
+                    ""path"": ""<Gamepad>/start"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Controller"",
+                    ""action"": ""Pause"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -191,7 +221,7 @@ public class @InputController : IInputActionCollection, IDisposable
             ""id"": ""48768270-a9fd-47c3-80c3-0e5fe1a9e5d5"",
             ""actions"": [
                 {
-                    ""name"": ""Pause"",
+                    ""name"": ""Resume"",
                     ""type"": ""Button"",
                     ""id"": ""34e2ed34-0bd2-4ff6-a2e5-ba15f8f8549b"",
                     ""expectedControlType"": ""Button"",
@@ -207,7 +237,7 @@ public class @InputController : IInputActionCollection, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Pause"",
+                    ""action"": ""Resume"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -218,7 +248,7 @@ public class @InputController : IInputActionCollection, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Pause"",
+                    ""action"": ""Resume"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -261,9 +291,10 @@ public class @InputController : IInputActionCollection, IDisposable
         m_Player_Look = m_Player.FindAction("Look", throwIfNotFound: true);
         m_Player_Fire = m_Player.FindAction("Fire", throwIfNotFound: true);
         m_Player_Interact = m_Player.FindAction("Interact", throwIfNotFound: true);
+        m_Player_Pause = m_Player.FindAction("Pause", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
-        m_UI_Pause = m_UI.FindAction("Pause", throwIfNotFound: true);
+        m_UI_Resume = m_UI.FindAction("Resume", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -317,6 +348,7 @@ public class @InputController : IInputActionCollection, IDisposable
     private readonly InputAction m_Player_Look;
     private readonly InputAction m_Player_Fire;
     private readonly InputAction m_Player_Interact;
+    private readonly InputAction m_Player_Pause;
     public struct PlayerActions
     {
         private @InputController m_Wrapper;
@@ -325,6 +357,7 @@ public class @InputController : IInputActionCollection, IDisposable
         public InputAction @Look => m_Wrapper.m_Player_Look;
         public InputAction @Fire => m_Wrapper.m_Player_Fire;
         public InputAction @Interact => m_Wrapper.m_Player_Interact;
+        public InputAction @Pause => m_Wrapper.m_Player_Pause;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -346,6 +379,9 @@ public class @InputController : IInputActionCollection, IDisposable
                 @Interact.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnInteract;
                 @Interact.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnInteract;
                 @Interact.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnInteract;
+                @Pause.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnPause;
+                @Pause.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnPause;
+                @Pause.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnPause;
             }
             m_Wrapper.m_PlayerActionsCallbackInterface = instance;
             if (instance != null)
@@ -362,6 +398,9 @@ public class @InputController : IInputActionCollection, IDisposable
                 @Interact.started += instance.OnInteract;
                 @Interact.performed += instance.OnInteract;
                 @Interact.canceled += instance.OnInteract;
+                @Pause.started += instance.OnPause;
+                @Pause.performed += instance.OnPause;
+                @Pause.canceled += instance.OnPause;
             }
         }
     }
@@ -370,12 +409,12 @@ public class @InputController : IInputActionCollection, IDisposable
     // UI
     private readonly InputActionMap m_UI;
     private IUIActions m_UIActionsCallbackInterface;
-    private readonly InputAction m_UI_Pause;
+    private readonly InputAction m_UI_Resume;
     public struct UIActions
     {
         private @InputController m_Wrapper;
         public UIActions(@InputController wrapper) { m_Wrapper = wrapper; }
-        public InputAction @Pause => m_Wrapper.m_UI_Pause;
+        public InputAction @Resume => m_Wrapper.m_UI_Resume;
         public InputActionMap Get() { return m_Wrapper.m_UI; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -385,16 +424,16 @@ public class @InputController : IInputActionCollection, IDisposable
         {
             if (m_Wrapper.m_UIActionsCallbackInterface != null)
             {
-                @Pause.started -= m_Wrapper.m_UIActionsCallbackInterface.OnPause;
-                @Pause.performed -= m_Wrapper.m_UIActionsCallbackInterface.OnPause;
-                @Pause.canceled -= m_Wrapper.m_UIActionsCallbackInterface.OnPause;
+                @Resume.started -= m_Wrapper.m_UIActionsCallbackInterface.OnResume;
+                @Resume.performed -= m_Wrapper.m_UIActionsCallbackInterface.OnResume;
+                @Resume.canceled -= m_Wrapper.m_UIActionsCallbackInterface.OnResume;
             }
             m_Wrapper.m_UIActionsCallbackInterface = instance;
             if (instance != null)
             {
-                @Pause.started += instance.OnPause;
-                @Pause.performed += instance.OnPause;
-                @Pause.canceled += instance.OnPause;
+                @Resume.started += instance.OnResume;
+                @Resume.performed += instance.OnResume;
+                @Resume.canceled += instance.OnResume;
             }
         }
     }
@@ -423,9 +462,10 @@ public class @InputController : IInputActionCollection, IDisposable
         void OnLook(InputAction.CallbackContext context);
         void OnFire(InputAction.CallbackContext context);
         void OnInteract(InputAction.CallbackContext context);
+        void OnPause(InputAction.CallbackContext context);
     }
     public interface IUIActions
     {
-        void OnPause(InputAction.CallbackContext context);
+        void OnResume(InputAction.CallbackContext context);
     }
 }

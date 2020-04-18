@@ -29,6 +29,11 @@ public static class TilesetManager
         return tileSets.Keys.ToArray();
     }
 
+    public static Dictionary<string, TileBase> RandomSet()
+    {
+        return tileSets[Sets()[Random.Range(0, Sets().Length)]];
+    }
+
     public static Dictionary<string, TileBase> Set(string name)
     {
         return tileSets[name];
