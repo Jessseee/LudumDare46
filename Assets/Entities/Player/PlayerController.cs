@@ -3,10 +3,20 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-[RequireComponent(typeof(PlayerInput))]
 public class PlayerController : MonoBehaviour
 {
     Rigidbody2D rb;
+    InputController controls;
+
+    private void Awake()
+    {
+        controls = new InputController();
+    }
+
+    private void OnEnable()
+    {
+        controls.Enable();
+    }
     // Start is called before the first frame update
     void Start()
     {
@@ -16,16 +26,6 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
-    }
-
-    void OnMove(InputValue value)
-    {
-        rb.velocity = value.Get<Vector2>() * 10;
-    }
-
-    void OnInteract()
-    {
-        Debug.Log("Test interaction");
+        rb.velocity = controls.Player.Move.ReadValue<Vector2>() * 10;
     }
 }
