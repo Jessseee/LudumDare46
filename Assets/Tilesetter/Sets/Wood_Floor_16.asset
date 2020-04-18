@@ -11,7 +11,7 @@ MonoBehaviour:
   m_Script: {fileID: 13312, guid: 0000000000000000e000000000000000, type: 0}
   m_Name: Wood_Floor_16
   m_EditorClassIdentifier: 
-  m_Sprite: {fileID: 21300032, guid: a416a280be5fc63d1e619299099e78ef, type: 3}
+  m_Sprite: {fileID: 21300032, guid: 15f6640194896fe44e1e4c01aef04264, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Transform:
     e00: 1
