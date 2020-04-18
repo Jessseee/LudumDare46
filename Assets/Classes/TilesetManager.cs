@@ -12,7 +12,7 @@ public static class TilesetManager
     static TilesetManager()
     {
         tileSets = new Dictionary<string, Dictionary<string, TileBase>>();
-        TileBase[] tileAssets = Resources.LoadAll<TileBase>("tilesets");
+        TileBase[] tileAssets = Resources.LoadAll<TileBase>("Sets");
         foreach (TileBase tile in tileAssets)
         {
             string[] tileInfo = tile.name.Split('_');
