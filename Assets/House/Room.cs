@@ -46,7 +46,7 @@ public class Room
             int hallwayIndex = Random.Range(0, size.y - 1);
             Room sideA = new Room(position, new Vector2Int(splitIndex, size.y), tilemap);
             Room sideB = new Room(new Vector2Int(position.x+splitIndex+1, position.y), new Vector2Int(size.x-splitIndex-1, size.y), tilemap);
-            //Room hallway = new Room(new Vector2Int(position.x+splitIndex, position.y+hallwayIndex), new Vector2Int(1, 3), tilemap);
+            Room hallway = new Room(new Vector2Int(position.x+splitIndex, position.y+hallwayIndex), new Vector2Int(1, 3), tilemap);
             return new Room[] { sideA, sideB };
         } else
         {
@@ -55,7 +55,7 @@ public class Room
             int hallwayIndex = Random.Range(0, size.x - 1);
             Room sideA = new Room(position, new Vector2Int(size.x, splitIndex), tilemap);
             Room sideB = new Room(new Vector2Int(position.x, position.y + splitIndex + 1), new Vector2Int(size.x, size.y - splitIndex - 1), tilemap);
-            //Room hallway = new Room(new Vector2Int(position.x + hallwayIndex, position.y + splitIndex), new Vector2Int(3, 1), tilemap);
+            Room hallway = new Room(new Vector2Int(position.x + hallwayIndex, position.y + splitIndex), new Vector2Int(3, 1), tilemap);
             return new Room[] { sideA, sideB };
         }
     }
