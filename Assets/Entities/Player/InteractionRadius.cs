@@ -6,7 +6,7 @@ public class InteractionRadius : MonoBehaviour
 {
     List<Interactable> interactables = new List<Interactable>();
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
         Interactable interactable = collision.gameObject.GetComponent<Interactable>();
 
@@ -17,10 +17,11 @@ public class InteractionRadius : MonoBehaviour
         }
     }
 
-    private void OnCollisionExit2D(Collision2D collision)
+    private void OnTriggerExit2D(Collider2D collision)
     {
         Interactable interactable = collision.gameObject.GetComponent<Interactable>();
         interactables.Remove(interactable);
+        interactable.ToggleUI(false);
     }
 
     public void Interact()
@@ -30,7 +31,6 @@ public class InteractionRadius : MonoBehaviour
             Interactable interactable = interactables.Last();
 
             interactable.Interact();
-            interactable.ToggleUI(false);
         }
     }
 }
