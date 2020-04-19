@@ -1,15 +1,18 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
+    [SerializeField] List<Interactable> interactables = new List<Interactable>();
+    public Furniture grabbedItem;
+
     Rigidbody2D rb;
     InputController controls;
     Animator animator;
     SpriteRenderer sprite;
-    InteractionRadius interactionRadius;
 
     private void Awake()
     {
@@ -35,7 +38,6 @@ public class PlayerController : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         sprite = GetComponent<SpriteRenderer>();
-        interactionRadius = GetComponentInChildren<InteractionRadius>();
 
         //Add control delegates
         controls.Player.Interact.performed += ctx => handleInteract();
@@ -56,7 +58,7 @@ public class PlayerController : MonoBehaviour
         {
             animator.SetBool("Moving", false);
         }
-        
+
         if (direction.y < 0)
         {
             animator.SetBool("Backward", true);
@@ -80,7 +82,23 @@ public class PlayerController : MonoBehaviour
 
     void handleInteract()
     {
-        interactionRadius.Interact();
+        if (interactables.Count > 0)
+        {
+            Interactable interactable = interactables.Last();
+
+            if (grabbedItem)
+            {
+                if (interactable.GetType().Name == "Mouth") {
+                    grabbedItem.transform.parent = interactable.transform;
+                    grabbedItem = null;
+                }
+
+                grabbedItem.transform.parent = null;
+                grabbedItem = null;
+            }
+
+            interactable.Interact(GetComponentInParent<PlayerController>());
+        }
     }
 
     void handlePause()
@@ -91,5 +109,23 @@ public class PlayerController : MonoBehaviour
     void handleResume()
     {
         this.enabled = true;
+    }
+
+    private void OnTriggerEnter2D(Collider2D collider)
+    {
+        Interactable interactable = collider.GetComponent<Interactable>();
+
+        if (interactable != null)
+        {
+            interactables.Add(interactable);
+            interactable.ToggleUI(true);
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D collider)
+    {
+        Interactable interactable = collider.GetComponent<Interactable>();
+        interactables.Remove(interactable);
+        interactable.ToggleUI(false);
     }
 }

@@ -1,13 +1,10 @@
-﻿public class Mouth : Interactable
+﻿using UnityEngine;
+
+public class Mouth : Interactable
 {
 
-    public override void Interact()
+    public override void Interact(PlayerController player)
     {
-        base.Interact();
-    }
-
-    public override void ToggleUI(bool state)
-    {
-        base.ToggleUI(state);
+        base.Interact(player);
     }
 }
