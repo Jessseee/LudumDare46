@@ -38,10 +38,7 @@ public class Section
 
         GenerateRooms();
         Debug.Log("Rooms: " + rooms.Count);
-        foreach (Room room in rooms)
-        {
-            room.Display();
-        }
+        Display();
     }
 
     void GenerateRooms()
@@ -60,6 +57,19 @@ public class Section
         foreach (Room room in roomsToDelete) rooms.Remove(room);
         foreach (Room room in roomsToAdd) rooms.Add(room);
         if (roomsToAdd.Count > 0) GenerateRooms();
+    }
+
+    void Display()
+    {
+        for (int x = 0; x < size; x++)
+        {
+            for (int y =0; y < size; y++)
+            {
+                tilemap.SetTile(new Vector3Int(position.x + x, position.y + y, 0), null);
+            }
+        }
+
+        foreach (Room room in rooms) room.Display();
     }
 }
 
