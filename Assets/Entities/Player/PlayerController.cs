@@ -9,6 +9,7 @@ public class PlayerController : MonoBehaviour
     InputController controls;
     Animator animator;
     SpriteRenderer sprite;
+    InteractionRadius interactionRadius;
 
     private void Awake()
     {
@@ -28,12 +29,13 @@ public class PlayerController : MonoBehaviour
         controls.Player.Disable();
         controls.UI.Enable();
     }
-    // Start is called before the first frame update
+
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         sprite = GetComponent<SpriteRenderer>();
+        interactionRadius = GetComponentInChildren<InteractionRadius>();
 
         //Add control delegates
         controls.Player.Interact.performed += ctx => handleInteract();
@@ -41,7 +43,6 @@ public class PlayerController : MonoBehaviour
         controls.UI.Resume.performed += ctx => handleResume();
     }
 
-    // Update is called once per frame
     void Update()
     {
         Vector2 direction = controls.Player.Move.ReadValue<Vector2>();
@@ -79,7 +80,7 @@ public class PlayerController : MonoBehaviour
 
     void handleInteract()
     {
-
+        interactionRadius.Interact();
     }
 
     void handlePause()
