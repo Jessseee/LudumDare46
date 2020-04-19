@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -36,6 +37,7 @@ public class Section
         rooms.Add(new Room(new Vector2Int(position.x + 1, position.y + 1), new Vector2Int(size-2, size-2), tilemap));
 
         GenerateRooms();
+        Debug.Log("Rooms: " + rooms.Count);
         foreach (Room room in rooms)
         {
             room.Display();
@@ -44,14 +46,27 @@ public class Section
 
     void GenerateRooms()
     {
-        IEnumerable<Room> sortedRooms = rooms.OrderBy(room => -room.size.x * room.size.y);
-        Room currentRoom = sortedRooms.First();
-        if (currentRoom.Splitable())
+        List<Room> roomsToDelete = new List<Room>();
+        List<Room> roomsToAdd = new List<Room>();
+        foreach(Room room in rooms)
         {
-            Room[] newRooms = rooms[0].Split();
-            rooms.Remove(currentRoom);
-            rooms.AddRange(newRooms);
-            GenerateRooms();
+            if (room.Splitable())
+            {
+                Room[] newRooms = room.Split();
+                roomsToDelete.Add(room);
+                foreach (Room newRoom in newRooms) roomsToAdd.Add(newRoom);
+            }
         }
+        foreach (Room room in roomsToDelete) rooms.Remove(room);
+        foreach (Room room in roomsToAdd) rooms.Add(room);
+        if (roomsToAdd.Count > 0) GenerateRooms();
+    }
+}
+
+static class Extensions
+{
+    public static IList<T> Clone<T>(this IList<T> listToClone) where T : ICloneable
+    {
+        return listToClone.Select(item => (T)item.Clone()).ToList();
     }
 }
