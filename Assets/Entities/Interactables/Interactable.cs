@@ -3,16 +3,13 @@ using UnityEngine;
 
 abstract public class Interactable : MonoBehaviour
 {
-    public string interactionText;
-    public TextMeshProUGUI interactionUI;
+    public string interactionText = "Interact";
+    private TextMeshProUGUI interactionUI;
 
     private void Start()
     {
+        interactionUI = GameObject.FindWithTag("InteractionUI").GetComponent<TextMeshProUGUI>();
         interactionUI.enabled = false;
-    }
-
-    public virtual void Interact() {
-        Debug.LogWarning("Interact function not implemented!");
     }
 
     public virtual void ToggleUI(bool state)
@@ -20,5 +17,10 @@ abstract public class Interactable : MonoBehaviour
         if (interactionUI == null) Debug.LogWarning("no interaciton UI set");
         interactionUI.enabled = state;
         interactionUI.text = "Press E to " + interactionText;
+    }
+
+    public virtual void Interact(PlayerController player)
+    {
+        Debug.LogWarning("Interact function not implemented!");
     }
 }
