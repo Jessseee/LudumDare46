@@ -37,6 +37,7 @@ public class Room
         }
         foreach (Vector2Int hallway in hallways)
         {
+            /*
             if(hallway.x < position.x || hallway.x >= position.x + size.x)
             {
                 for (int y = 0; y < 3; y++)
@@ -44,11 +45,19 @@ public class Room
                     tilemap.SetTile(new Vector3Int(hallway.x, hallway.y + y, 0), tileset["Floor"]);
                 }
             }
-            else
+            else if(hallway.y < position.y || hallway.y >= position.y + size.y)
             {
                 for (int x = 0; x < 3; x++)
                 {
                     tilemap.SetTile(new Vector3Int(hallway.x + x, hallway.y, 0), tileset["Floor"]);
+                }
+            }
+            */
+            for (int x = -1; x < 2; x++)
+            {
+                for (int y = -1; y < 2; y++)
+                {
+                    tilemap.SetTile(new Vector3Int(hallway.x + x, hallway.y + y, 0), tileset["Floor"]);
                 }
             }
         }
@@ -99,7 +108,7 @@ public class Room
         LogSplits(splits);
         int splitIndex = splits[Random.Range(0, splits.Length)];
         if (splitIndex < minimumRoomSize || splitIndex > size.x - minimumRoomSize) return new Room[] { this };
-        int hallwayIndex = Random.Range(0, size.y - 2);
+        int hallwayIndex = Random.Range(1, size.y - 3);
         Room sideA = new Room(position, new Vector2Int(splitIndex, size.y), tilemap);
         Room sideB = new Room(new Vector2Int(position.x + splitIndex + 1, position.y), new Vector2Int(size.x - splitIndex - 1, size.y), tilemap);
         sideA.AddRelativeHallway(new Vector2Int(splitIndex, hallwayIndex));
@@ -125,7 +134,7 @@ public class Room
         LogSplits(splits);
         int splitIndex = splits[Random.Range(0, splits.Length)];
         if (splitIndex < minimumRoomSize || splitIndex > size.y - minimumRoomSize) return new Room[] { this };
-        int hallwayIndex = Random.Range(0, size.x - 2);
+        int hallwayIndex = Random.Range(1, size.x - 3);
         Room sideA = new Room(position, new Vector2Int(size.x, splitIndex), tilemap);
         Room sideB = new Room(new Vector2Int(position.x, position.y + splitIndex + 1), new Vector2Int(size.x, size.y - splitIndex - 1), tilemap);
         sideA.AddRelativeHallway(new Vector2Int(hallwayIndex, splitIndex));
@@ -149,7 +158,7 @@ public class Room
         List<int> possibilites = Enumerable.Range(minimumRoomSize, (direction == 0 ? size.x : size.y) - minimumRoomSize * 2).ToList();
         foreach (Vector2Int hallway in hallways)
         {
-            for (int i = 0; i < 3; i++)
+            for (int i = -1; i < 2; i++)
             {
                 if (direction == 0) possibilites.Remove(hallway.x - position.x + i);
                 else possibilites.Remove(hallway.y - position.y + i);

@@ -12,6 +12,7 @@ public class Section
     Tilemap tilemap;
     Dictionary<string, TileBase> tileset;
     List<Room> rooms;
+    bool generating = true;
     
     public Section(Vector2Int position, int size, Tilemap tilemap)
     {
@@ -57,7 +58,13 @@ public class Section
         }
         foreach (Room room in roomsToDelete) rooms.Remove(room);
         foreach (Room room in roomsToAdd) rooms.Add(room);
-        if (roomsToAdd.Count > 0) GenerateRooms();
+        generating = roomsToAdd.Count > 0;
+        Display();
+    }
+
+    public void Update()
+    {
+        if (generating) GenerateRooms();
     }
 
     void Display()
