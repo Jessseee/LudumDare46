@@ -56,37 +56,17 @@ public class Room
 
     public bool Splitable()
     {
-        bool sizeCondition = ((size.x >= minimumSplitSize || size.y >= minimumSplitSize) && size.x > minimumRoomSize && size.y > minimumRoomSize);
-
-        bool hallwayVerticalCondition = false;
-        for (int x = minimumRoomSize; x < size.x - minimumRoomSize; x++)
+        if (size.x > minimumRoomSize && size.y > minimumRoomSize)
         {
-            bool possible = true;
-            foreach (Vector2Int hallway in hallways)
+            if (size.x >= minimumSplitSize)
             {
-                for (int x2 = 0; x2 < 3; x2++)
-                {
-                    if (position.x + x + x2 == hallway.x) possible = false;
-                }
+                if (FindSplits(0).Length > 0) return true;
             }
-            if (possible) hallwayVerticalCondition = true;
-        }
-
-        bool hallwayHorizontalCondition = false;
-        for (int y = minimumRoomSize; y < size.y - minimumRoomSize; y++)
-        {
-            bool possible = true;
-            foreach (Vector2Int hallway in hallways)
-            {
-                for (int y2 = 0; y2 < 3; y2++)
-                {
-                    if (position.y + y + y2 == hallway.y) possible = false;
-                }
+            if (size.y >= minimumSplitSize) {
+                if (FindSplits(1).Length > 0) return true;
             }
-            if (possible) hallwayHorizontalCondition = true;
         }
-
-        return (sizeCondition && hallwayVerticalCondition && hallwayHorizontalCondition);
+        return false;
     }
 
     public void AddHallway(Vector2Int hallway)
@@ -101,82 +81,88 @@ public class Room
 
     public Room[] Split()
     {
-        if(size.x > size.y)
+        if((size.x > size.y || FindSplits(1).Length == 0) && FindSplits(0).Length > 0)
         {
-            // Split Vertical
-            int splitIndex = FindVerticalSplit();
-            if (splitIndex == 0) return new Room[] { this };
-            int hallwayIndex = Random.Range(0, size.y - 2);
-            Room sideA = new Room(position, new Vector2Int(splitIndex, size.y), tilemap);
-            Room sideB = new Room(new Vector2Int(position.x+splitIndex+1, position.y), new Vector2Int(size.x-splitIndex-1, size.y), tilemap);
-            sideA.AddRelativeHallway(new Vector2Int(splitIndex, hallwayIndex));
-            sideB.AddRelativeHallway(new Vector2Int(-1, hallwayIndex));
-            foreach (Vector2Int hallway in hallways)
-            {
-                if (hallway.x < splitIndex)
-                {
-                    sideA.AddHallway(hallway);
-                }
-                else
-                {
-                    sideB.AddHallway(hallway);
-                }
-            } 
-            return new Room[] { sideA, sideB };
+            return SplitVertical();
         }
-        else
+        else if (FindSplits(1).Length > 0)
         {
-            // Split Horizontal
-            int splitIndex = FindHorizontalSplit();
-            if (splitIndex == 0) return new Room[] { this };
-            int hallwayIndex = Random.Range(0, size.x - 2);
-            Room sideA = new Room(position, new Vector2Int(size.x, splitIndex), tilemap);
-            Room sideB = new Room(new Vector2Int(position.x, position.y + splitIndex + 1), new Vector2Int(size.x, size.y - splitIndex - 1), tilemap);
-            sideA.AddRelativeHallway(new Vector2Int(hallwayIndex, splitIndex));
-            sideB.AddRelativeHallway(new Vector2Int(hallwayIndex, -1));
-            foreach (Vector2Int hallway in hallways)
-            {
-                if (hallway.y < splitIndex)
-                {
-                    sideA.AddHallway(hallway);
-                }
-                else
-                {
-                    sideB.AddHallway(hallway);
-                }
-            }
-            return new Room[] { sideA, sideB };
+            return SplitHorizontal();
         }
+        return null;
     }
 
-    int FindVerticalSplit()
+    Room[] SplitVertical()
     {
-        List<int> possibilites = Enumerable.Range(minimumRoomSize, size.x - minimumRoomSize).ToList();
+        // Split Vertical
+        int[] splits = FindSplits(0);
+        LogSplits(splits);
+        int splitIndex = splits[Random.Range(0, splits.Length)];
+        if (splitIndex < minimumRoomSize || splitIndex > size.x - minimumRoomSize) return new Room[] { this };
+        int hallwayIndex = Random.Range(0, size.y - 2);
+        Room sideA = new Room(position, new Vector2Int(splitIndex, size.y), tilemap);
+        Room sideB = new Room(new Vector2Int(position.x + splitIndex + 1, position.y), new Vector2Int(size.x - splitIndex - 1, size.y), tilemap);
+        sideA.AddRelativeHallway(new Vector2Int(splitIndex, hallwayIndex));
+        sideB.AddRelativeHallway(new Vector2Int(-1, hallwayIndex));
         foreach (Vector2Int hallway in hallways)
         {
-            for (int x = 0; x < 3; x++)
+            if (hallway.x < splitIndex)
             {
-                possibilites.Remove(hallway.x - position.x + x);
+                sideA.AddHallway(hallway);
+            }
+            else
+            {
+                sideB.AddHallway(hallway);
             }
         }
-
-        int splitIndex = possibilites[Random.Range(0, possibilites.Count)];
-
-        return splitIndex;
+        return new Room[] { sideA, sideB };
     }
-    int FindHorizontalSplit()
+
+    Room[] SplitHorizontal()
     {
-        List<int> possibilites = Enumerable.Range(minimumRoomSize, size.y - minimumRoomSize).ToList();
+        // Split Horizontal
+        int[] splits = FindSplits(1);
+        LogSplits(splits);
+        int splitIndex = splits[Random.Range(0, splits.Length)];
+        if (splitIndex < minimumRoomSize || splitIndex > size.y - minimumRoomSize) return new Room[] { this };
+        int hallwayIndex = Random.Range(0, size.x - 2);
+        Room sideA = new Room(position, new Vector2Int(size.x, splitIndex), tilemap);
+        Room sideB = new Room(new Vector2Int(position.x, position.y + splitIndex + 1), new Vector2Int(size.x, size.y - splitIndex - 1), tilemap);
+        sideA.AddRelativeHallway(new Vector2Int(hallwayIndex, splitIndex));
+        sideB.AddRelativeHallway(new Vector2Int(hallwayIndex, -1));
         foreach (Vector2Int hallway in hallways)
         {
-            for (int y = 0; y < 3; y++)
+            if (hallway.y < splitIndex)
             {
-                possibilites.Remove(hallway.y - position.y + y);
+                sideA.AddHallway(hallway);
+            }
+            else
+            {
+                sideB.AddHallway(hallway);
+            }
+        }
+        return new Room[] { sideA, sideB };
+    }
+
+    int[] FindSplits(int direction)
+    {
+        List<int> possibilites = Enumerable.Range(minimumRoomSize, (direction == 0 ? size.x : size.y) - minimumRoomSize * 2).ToList();
+        foreach (Vector2Int hallway in hallways)
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                if (direction == 0) possibilites.Remove(hallway.x - position.x + i);
+                else possibilites.Remove(hallway.y - position.y + i);
             }
         }
 
-        int splitIndex = possibilites[Random.Range(0, possibilites.Count)];
+        return possibilites.ToArray();
+    }
 
-        return splitIndex;
+    void LogSplits(int[] splits)
+    {
+        string message = "Splits: ";
+        foreach (int split in splits) message += split + ", ";
+        Debug.Log(message);
     }
 }

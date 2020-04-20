@@ -50,6 +50,7 @@ public class Section
             if (room.Splitable())
             {
                 Room[] newRooms = room.Split();
+                if (newRooms == null) continue;
                 roomsToDelete.Add(room);
                 foreach (Room newRoom in newRooms) roomsToAdd.Add(newRoom);
             }
