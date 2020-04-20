@@ -4,14 +4,12 @@ public class Mouth : Interactable
 {
     int furnitureFed;
     Animator animator;
-    ParticleSystem particles;
     CameraController camera;
 
     public override void Start()
     {
         base.Start();
         animator = GetComponent<Animator>();
-        particles = GetComponent<ParticleSystem>();
         camera = Camera.main.GetComponent<CameraController>();
     }
 
