@@ -4,12 +4,14 @@ using UnityEngine;
 abstract public class Interactable : MonoBehaviour
 {
     public string interactionText = "Interact";
+    public SpriteRenderer sprite;
     private TextMeshProUGUI interactionUI;
 
-    private void Start()
+    public virtual void Start()
     {
         interactionUI = GameObject.FindWithTag("InteractionUI").GetComponent<TextMeshProUGUI>();
         interactionUI.enabled = false;
+        sprite = GetComponent<SpriteRenderer>();
     }
 
     public virtual void ToggleUI(bool state)

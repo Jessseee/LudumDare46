@@ -6,7 +6,7 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField] List<Interactable> interactables = new List<Interactable>();
+    public List<Interactable> interactables = new List<Interactable>();
     public Furniture grabbedItem;
 
     Rigidbody2D rb;
@@ -85,19 +85,11 @@ public class PlayerController : MonoBehaviour
         if (interactables.Count > 0)
         {
             Interactable interactable = interactables.Last();
-
-            if (grabbedItem)
-            {
-                if (interactable.GetType().Name == "Mouth") {
-                    grabbedItem.transform.parent = interactable.transform;
-                    grabbedItem = null;
-                }
-
-                grabbedItem.transform.parent = null;
-                grabbedItem = null;
-            }
-
-            interactable.Interact(GetComponentInParent<PlayerController>());
+            interactable.Interact(this);
+        } else if (grabbedItem)
+        {
+            grabbedItem.transform.parent = null;
+            grabbedItem = null;
         }
     }
 
@@ -125,7 +117,11 @@ public class PlayerController : MonoBehaviour
     private void OnTriggerExit2D(Collider2D collider)
     {
         Interactable interactable = collider.GetComponent<Interactable>();
-        interactables.Remove(interactable);
-        interactable.ToggleUI(false);
+
+        if (interactable != null)
+        {
+            interactables.Remove(interactable);
+            interactable.ToggleUI(false);
+        }
     }
 }
