@@ -4,6 +4,8 @@ using UnityEngine;
 abstract public class Interactable : MonoBehaviour
 {
     public string interactionText = "Interact";
+
+    [HideInInspector]
     public SpriteRenderer sprite;
     private TextMeshProUGUI interactionUI;
 
@@ -16,7 +18,6 @@ abstract public class Interactable : MonoBehaviour
 
     public virtual void ToggleUI(bool state)
     {
-        if (interactionUI == null) Debug.LogWarning("no interaciton UI set");
         interactionUI.enabled = state;
         interactionUI.text = "Press E to " + interactionText;
     }

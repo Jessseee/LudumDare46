@@ -16,7 +16,7 @@ public class Furniture : Interactable
 
     public override void ToggleUI(bool state)
     {
-        interactionText = "Furniture";
+        interactionText = "grab furniture";
         base.ToggleUI(state);
     }
 
@@ -33,7 +33,6 @@ public class Furniture : Interactable
             transform.localPosition = Vector3.Lerp(transform.localPosition, Vector3.zero, t);
             transform.localScale = Vector3.Lerp(transform.localScale, new Vector3(0.5f, 0.5f, 0.5f), t);
             sprite.color = Color.Lerp(sprite.color, Color.clear, t/10);
-
 
             yield return 1;
         }
